@@ -4,7 +4,7 @@
 
     Author: Colton Ogden
     cogden@cs50.harvard.edu
-    
+
     A classic platformer in the style of Super Mario Bros., using a free
     art pack. Super Mario Bros. was instrumental in the resurgence of video
     games in the mid-80s, following the infamous crash shortly after the
@@ -27,7 +27,7 @@ function love.load()
     love.window.setTitle('Super 50 Bros.')
 
     math.randomseed(os.time())
-    
+
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
         vsync = true,
@@ -37,7 +37,8 @@ function love.load()
 
     gStateMachine = StateMachine {
         ['start'] = function() return StartState() end,
-        ['play'] = function() return PlayState() end
+        ['play'] = function() return PlayState() end,
+        ['test'] = TestState
     }
     gStateMachine:change('start')
 
@@ -55,6 +56,8 @@ end
 function love.keypressed(key)
     if key == 'escape' then
         love.event.quit()
+    elseif key == 'r' then
+        gStateMachine:change('start')
     end
 
     love.keyboard.keysPressed[key] = true

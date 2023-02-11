@@ -46,7 +46,7 @@ function GenerateTileSets(quads, setsX, setsY, sizeX, sizeY)
     -- for each tile set on the X and Y
     for tilesetY = 1, setsY do
         for tilesetX = 1, setsX do
-            
+
             -- tileset table
             table.insert(tilesets, {})
             tableCounter = tableCounter + 1
@@ -61,41 +61,85 @@ function GenerateTileSets(quads, setsX, setsY, sizeX, sizeY)
 
     return tilesets
 end
-
 --[[
     Recursive table printing function.
     https://coronalabs.com/blog/2014/09/02/tutorial-printing-table-contents/
 ]]
-function print_r ( t )
-    local print_r_cache={}
-    local function sub_print_r(t,indent)
+function print_r(t, level)
+    level = level or (1 / 0)
+    local print_r_cache = {}
+    local function sub_print_r(t, indent, l)
         if (print_r_cache[tostring(t)]) then
-            print(indent.."*"..tostring(t))
+            print(indent .. "*" .. tostring(t))
         else
-            print_r_cache[tostring(t)]=true
-            if (type(t)=="table") then
-                for pos,val in pairs(t) do
-                    if (type(val)=="table") then
-                        print(indent.."["..pos.."] => "..tostring(t).." {")
-                        sub_print_r(val,indent..string.rep(" ",string.len(pos)+8))
-                        print(indent..string.rep(" ",string.len(pos)+6).."}")
-                    elseif (type(val)=="string") then
-                        print(indent.."["..pos..'] => "'..val..'"')
+            print_r_cache[tostring(t)] = true
+            if (type(t) == "table") then
+                for pos, val in pairs(t) do
+                    if (type(val) == "table" and l < level) then
+                        print(indent .. "[" .. pos .. "] => " .. tostring(t) .. " {")
+                        sub_print_r(val, indent .. string.rep(" ", string.len(pos) + 8), l + 1)
+                        print(indent .. string.rep(" ", string.len(pos) + 6) .. "}")
+                    elseif (type(val) == "string") then
+                        print(indent .. "[" .. pos .. '] => "' .. val .. '"')
                     else
-                        print(indent.."["..pos.."] => "..tostring(val))
+                        print(indent .. "[" .. pos .. "] => " .. tostring(val))
                     end
                 end
             else
-                print(indent..tostring(t))
+                print(indent .. tostring(t))
             end
         end
     end
-    if (type(t)=="table") then
-        print(tostring(t).." {")
-        sub_print_r(t,"  ")
+    if (type(t) == "table") then
+        print(tostring(t) .. " {")
+        sub_print_r(t, "  ", 0)
         print("}")
     else
-        sub_print_r(t,"  ")
+        sub_print_r(t, "  ", 0)
     end
     print()
 end
+
+function Transpose(tab)
+    local translated = {}
+
+    for x, cols in ipairs(tab) do
+        -- local aaa = {}
+        table.insert(translated, x, {})
+        for y, col in ipairs(cols) do
+            table.insert(translated[y], x, col)
+        end
+    end
+
+    return translated
+end
+
+local t1 = {
+    {1, 2, 3},
+    {4, 5, 6},
+    {7, 8, 9}
+}
+
+function PrintT(ta)
+    for index, value in ipairs(ta) do
+        for i2, v2 in ipairs(value) do
+            print(index, i2, v2)
+        end
+    end
+end
+
+--
+--
+
+--
+
+--
+
+--
+
+--   x x x x x
+-- y
+-- y
+-- y
+-- y
+-- y

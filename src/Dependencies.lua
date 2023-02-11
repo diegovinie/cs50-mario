@@ -31,6 +31,7 @@ require 'src/Util'
 require 'src/states/BaseState'
 require 'src/states/game/PlayState'
 require 'src/states/game/StartState'
+require 'src/states/game/TestState'
 
 -- entity states
 require 'src/states/entity/PlayerFallingState'
@@ -78,9 +79,9 @@ gTextures = {
 
 gFrames = {
     ['tiles'] = GenerateQuads(gTextures['tiles'], TILE_SIZE, TILE_SIZE),
-    
+
     ['toppers'] = GenerateQuads(gTextures['toppers'], TILE_SIZE, TILE_SIZE),
-    
+
     ['bushes'] = GenerateQuads(gTextures['bushes'], 16, 16),
     ['jump-blocks'] = GenerateQuads(gTextures['jump-blocks'], 16, 16),
     ['gems'] = GenerateQuads(gTextures['gems'], 16, 16),
@@ -90,10 +91,10 @@ gFrames = {
 }
 
 -- these need to be added after gFrames is initialized because they refer to gFrames from within
-gFrames['tilesets'] = GenerateTileSets(gFrames['tiles'], 
+gFrames['tilesets'] = GenerateTileSets(gFrames['tiles'],
     TILE_SETS_WIDE, TILE_SETS_TALL, TILE_SET_WIDTH, TILE_SET_HEIGHT)
 
-gFrames['toppersets'] = GenerateTileSets(gFrames['toppers'], 
+gFrames['toppersets'] = GenerateTileSets(gFrames['toppers'],
     TOPPER_SETS_WIDE, TOPPER_SETS_TALL, TILE_SET_WIDTH, TILE_SET_HEIGHT)
 
 gFonts = {
