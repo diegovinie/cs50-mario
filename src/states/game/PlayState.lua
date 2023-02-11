@@ -19,7 +19,8 @@ function PlayState:init()
     self.gravityAmount = 6
 
     self.player = Player({
-        x = 0, y = 0,
+        x = self:calcSafeStartX(),
+        y = 0,
         width = 16, height = 20,
         texture = 'green-alien',
         stateMachine = StateMachine {
@@ -64,15 +65,15 @@ function PlayState:render()
     love.graphics.draw(gTextures['backgrounds'], gFrames['backgrounds'][self.background], math.floor(-self.backgroundX + 256), 0)
     love.graphics.draw(gTextures['backgrounds'], gFrames['backgrounds'][self.background], math.floor(-self.backgroundX + 256),
         gTextures['backgrounds']:getHeight() / 3 * 2, 0, 1, -1)
-    
+
     -- translate the entire view of the scene to emulate a camera
     love.graphics.translate(-math.floor(self.camX), -math.floor(self.camY))
-    
+
     self.level:render()
 
     self.player:render()
     love.graphics.pop()
-    
+
     -- render score
     love.graphics.setFont(gFonts['medium'])
     love.graphics.setColor(0, 0, 0, 1)
@@ -109,7 +110,7 @@ function PlayState:spawnEnemies()
 
                     -- random chance, 1 in 20
                     if math.random(20) == 1 then
-                        
+
                         -- instantiate snail, declaring in advance so we can pass it into state machine
                         local snail
                         snail = Snail {
@@ -134,4 +135,15 @@ function PlayState:spawnEnemies()
             end
         end
     end
+end
+
+function PlayState:calcSafeStartX()
+    for x = 1, self.tileMap.width do
+        local safe = self.tileMap:checkColumnSoil(x)
+
+        if safe then
+            return (x - 1) * TILE_SIZE
+        end
+    end
+    error("no safe tile.")
 end
