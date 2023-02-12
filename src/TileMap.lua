@@ -48,3 +48,31 @@ function TileMap:checkColumnSoil(x)
     end
     return false
 end
+
+function TileMap:findTopperY(x)
+    for y, cols in ipairs(self.tiles) do
+        if cols[x].topper then
+            return y
+        end
+    end
+
+    return nil
+end
+
+function TileMap:findSaveSlots(refX, height, backwards)
+    height = height or 0
+    local endSlot = backwards and 1 or self.width
+    local step = backwards and -1 or 1
+
+    for x = refX, endSlot, step do
+        if self:checkColumnSoil(x) then
+            local topper = self:findTopperY(x)
+            local y = topper - 1 - height
+            if y > 0 then
+                return x, y
+            end
+        end
+    end
+
+    error('No safe place')
+end

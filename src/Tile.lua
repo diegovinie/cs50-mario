@@ -8,7 +8,8 @@
 
 Tile = Class{}
 
-function Tile:init(x, y, id, topper, tileset, topperset)
+function Tile:init(x, y, id, topper, tileset, topperset, opts)
+    opts = opts or {}
     self.x = x
     self.y = y
 
@@ -19,6 +20,8 @@ function Tile:init(x, y, id, topper, tileset, topperset)
     self.tileset = tileset
     self.topper = topper
     self.topperset = topperset
+    self.locked = opts.locked
+    self.color = opts.color
 end
 
 --[[
@@ -37,10 +40,19 @@ end
 function Tile:render()
     love.graphics.draw(gTextures['tiles'], gFrames['tilesets'][self.tileset][self.id],
         (self.x - 1) * TILE_SIZE, (self.y - 1) * TILE_SIZE)
-    
+
     -- tile top layer for graphical variety
     if self.topper then
         love.graphics.draw(gTextures['toppers'], gFrames['toppersets'][self.topperset][self.id],
             (self.x - 1) * TILE_SIZE, (self.y - 1) * TILE_SIZE)
+    end
+
+    if self.locked then
+        love.graphics.draw(
+            gTextures['keys-and-locks'],
+            gFrames['keys-and-locks'][4 + self.color],
+            (self.x - 1) * TILE_SIZE,
+            (self.y - 1) * TILE_SIZE
+        )
     end
 end

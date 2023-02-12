@@ -16,7 +16,7 @@ function LevelMaker.generate(width, height)
     local objects = {}
 
     local tileID = TILE_ID_GROUND
-    
+
     -- whether we should draw our tiles with toppers
     local topper = true
     local tileset = math.random(20)
@@ -30,7 +30,7 @@ function LevelMaker.generate(width, height)
     -- column by column generation instead of row; sometimes better for platformers
     for x = 1, width do
         local tileID = TILE_ID_EMPTY
-        
+
         -- lay out the empty space
         for y = 1, 6 do
             table.insert(tiles[y],
@@ -57,7 +57,7 @@ function LevelMaker.generate(width, height)
             -- chance to generate a pillar
             if math.random(8) == 1 then
                 blockHeight = 2
-                
+
                 -- chance to generate bush on pillar
                 if math.random(8) == 1 then
                     table.insert(objects,
@@ -67,19 +67,19 @@ function LevelMaker.generate(width, height)
                             y = (4 - 1) * TILE_SIZE,
                             width = 16,
                             height = 16,
-                            
+
                             -- select random frame from bush_ids whitelist, then random row for variance
                             frame = BUSH_IDS[math.random(#BUSH_IDS)] + (math.random(4) - 1) * 7,
                             collidable = false
                         }
                     )
                 end
-                
+
                 -- pillar tiles
                 tiles[5][x] = Tile(x, 5, tileID, topper, tileset, topperset)
                 tiles[6][x] = Tile(x, 6, tileID, nil, tileset, topperset)
                 tiles[7][x].topper = nil
-            
+
             -- chance to generate bushes
             elseif math.random(8) == 1 then
                 table.insert(objects,
@@ -140,7 +140,7 @@ function LevelMaker.generate(width, height)
                                             player.score = player.score + 100
                                         end
                                     }
-                                    
+
                                     -- make the gem move up from the block and play a sound
                                     Timer.tween(0.1, {
                                         [gem] = {y = (blockHeight - 2) * TILE_SIZE}
@@ -163,6 +163,50 @@ function LevelMaker.generate(width, height)
 
     local map = TileMap(width, height)
     map.tiles = tiles
-    
+    local key, locked = LevelMaker.genKeyLockPair(map, math.random(4))
+
+    table.insert(objects, key)
+    table.insert(objects, locked)
+
     return GameLevel(entities, objects, map)
 end
+
+function LevelMaker.genKeyLockPair(map, color)
+    local keyX,     keyY    = map:findSaveSlots(math.random(10, 20), math.random(3))
+    local lockedX,  lockedY = map:findSaveSlots(map.width - 10, 3, true)
+
+    local key = GameObject {
+        texture = 'keys-and-locks',
+        frame = color,
+        x = (keyX - 1) * TILE_SIZE,
+        y = (keyY - 1) * TILE_SIZE,
+        width = 16,
+        height = 16,
+        consumable = true,
+        hit = false,
+        solid = false,
+        onConsume = function(obj)
+            print('col with key', obj)
+        end
+    }
+
+    local locked = GameObject {
+        texture = 'keys-and-locks',
+        frame = color + 4,
+        x = (lockedX - 1) * TILE_SIZE,
+        y = (lockedY - 1) * TILE_SIZE,
+        width = 16,
+        height = 16,
+        collidable = true,
+        hit = false,
+        solid = true,
+        onCollide = function(obj)
+            print('col with block', obj)
+        end
+        }
+
+    return key, locked
+end
+
+
+
