@@ -24,6 +24,7 @@ function PlayerWalkingState:update(dt)
     if not love.keyboard.isDown('left') and not love.keyboard.isDown('right') then
         self.player:changeState('idle')
     else
+        local speed = love.keyboard.isDown('lshift') and PLAYER_RUN_SPEED or PLAYER_WALK_SPEED
         local tileBottomLeft = self.player.map:pointToTile(self.player.x + 1, self.player.y + self.player.height)
         local tileBottomRight = self.player.map:pointToTile(self.player.x + self.player.width - 1, self.player.y + self.player.height)
 
@@ -39,11 +40,11 @@ function PlayerWalkingState:update(dt)
             self.player.dy = 0
             self.player:changeState('falling')
         elseif love.keyboard.isDown('left') then
-            self.player.x = self.player.x - PLAYER_WALK_SPEED * dt
+            self.player.x = self.player.x - speed * dt
             self.player.direction = 'left'
             self.player:checkLeftCollisions(dt)
         elseif love.keyboard.isDown('right') then
-            self.player.x = self.player.x + PLAYER_WALK_SPEED * dt
+            self.player.x = self.player.x + speed * dt
             self.player.direction = 'right'
             self.player:checkRightCollisions(dt)
         end
