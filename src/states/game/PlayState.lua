@@ -39,6 +39,13 @@ function PlayState:init()
 end
 
 function PlayState:update(dt)
+    -- anti-bounce needed
+    if gControl.start then
+        gPaused = not gPaused
+    end
+
+    if gPaused then return end
+
     Timer.update(dt)
 
     -- remove any nils from pickups, etc.

@@ -16,7 +16,8 @@ function StartState:init()
 end
 
 function StartState:update(dt)
-    if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
+    -- anti bouncing needed | love.keyboard.wasPressed('enter')
+    if gControl.start or gControl.buttonA then
         gStateMachine:change('play')
     end
 end

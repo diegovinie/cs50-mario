@@ -53,6 +53,7 @@ require 'src/Player'
 require 'src/Snail'
 require 'src/Tile'
 require 'src/TileMap'
+require 'src/Control'
 
 
 gSounds = {

@@ -20,11 +20,12 @@ function PlayerIdleState:init(player)
 end
 
 function PlayerIdleState:update(dt)
-    if love.keyboard.isDown('left') or love.keyboard.isDown('right') then
+    if gControl.left or gControl.right then
         self.player:changeState('walking')
     end
 
-    if love.keyboard.wasPressed('space') then
+    -- anti bounce needed | love.keyboard.wasPressed('space')
+    if gControl.buttonA then
         self.player:changeState('jump')
     end
 

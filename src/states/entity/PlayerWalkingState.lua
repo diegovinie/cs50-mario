@@ -21,10 +21,10 @@ function PlayerWalkingState:update(dt)
     self.player.currentAnimation:update(dt)
 
     -- idle if we're not pressing anything at all
-    if not love.keyboard.isDown('left') and not love.keyboard.isDown('right') then
+    if not gControl.left and not gControl.right then
         self.player:changeState('idle')
     else
-        local speed = love.keyboard.isDown('lshift') and PLAYER_RUN_SPEED or PLAYER_WALK_SPEED
+        local speed = gControl.buttonB and PLAYER_RUN_SPEED or PLAYER_WALK_SPEED
         local tileBottomLeft = self.player.map:pointToTile(self.player.x + 1, self.player.y + self.player.height)
         local tileBottomRight = self.player.map:pointToTile(self.player.x + self.player.width - 1, self.player.y + self.player.height)
 
@@ -39,11 +39,11 @@ function PlayerWalkingState:update(dt)
         if #collidedObjects == 0 and (tileBottomLeft and tileBottomRight) and (not tileBottomLeft:collidable() and not tileBottomRight:collidable()) then
             self.player.dy = 0
             self.player:changeState('falling')
-        elseif love.keyboard.isDown('left') then
+        elseif gControl.left then
             self.player.x = self.player.x - speed * dt
             self.player.direction = 'left'
             self.player:checkLeftCollisions(dt)
-        elseif love.keyboard.isDown('right') then
+        elseif gControl.right then
             self.player.x = self.player.x + speed * dt
             self.player.direction = 'right'
             self.player:checkRightCollisions(dt)
@@ -58,7 +58,8 @@ function PlayerWalkingState:update(dt)
         end
     end
 
-    if love.keyboard.wasPressed('space') then
+    -- anti-bounce needed | love.keyboard.wasPressed('space')
+    if gControl.buttonA then
         self.player:changeState('jump')
     end
 end

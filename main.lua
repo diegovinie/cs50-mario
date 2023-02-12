@@ -22,6 +22,10 @@
 love.graphics.setDefaultFilter('nearest', 'nearest')
 require 'src/Dependencies'
 
+gControl = Control(1)
+
+gPaused = false
+
 function love.load()
     love.graphics.setFont(gFonts['medium'])
     love.window.setTitle('Super 50 Bros.')
@@ -58,16 +62,26 @@ function love.keypressed(key)
         love.event.quit()
     elseif key == 'r' then
         gStateMachine:change('start')
+    elseif key == 'p' then
+        gPaused = not gPaused
     end
 
     love.keyboard.keysPressed[key] = true
 end
+
+function love.gamepadpressed(joystick, button)
+    if button == 'back' then
+        love.event.quit()
+    end
+end
+
 
 function love.keyboard.wasPressed(key)
     return love.keyboard.keysPressed[key]
 end
 
 function love.update(dt)
+    gControl:update(dt)
     gStateMachine:update(dt)
 
     love.keyboard.keysPressed = {}
