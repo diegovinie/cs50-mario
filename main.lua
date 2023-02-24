@@ -49,8 +49,6 @@ function love.load()
     gSounds['music']:setLooping(true)
     gSounds['music']:setVolume(0.5)
     gSounds['music']:play()
-
-    love.keyboard.keysPressed = {}
 end
 
 function love.resize(w, h)
@@ -66,25 +64,23 @@ function love.keypressed(key)
         gPaused = not gPaused
     end
 
-    love.keyboard.keysPressed[key] = true
+    gControl:registerKeyboard(key)
 end
 
 function love.gamepadpressed(joystick, button)
     if button == 'back' then
         love.event.quit()
     end
+
+    gControl:registerGamepadKey(button)
 end
 
-
-function love.keyboard.wasPressed(key)
-    return love.keyboard.keysPressed[key]
-end
 
 function love.update(dt)
     gControl:update(dt)
     gStateMachine:update(dt)
 
-    love.keyboard.keysPressed = {}
+    gControl:cleanKeys()
 end
 
 function love.draw()

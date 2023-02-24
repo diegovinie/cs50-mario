@@ -6,7 +6,7 @@ local keyMap = {
     down = { kb = 'down', gp = 'dpdown' },
     left = { kb = 'left', gp = 'dpleft' },
     buttonA = { kb = 'space', gp = 'a' },
-    buttonB = { kb = 'lshift', gp = 'b' },
+    buttonB = { kb = 'lshift', gp = 'x' },
     start = { kb = 'return', gp = 'start' },
     quit = { kb = 'escape', gp = 'back' }
 }
@@ -25,8 +25,7 @@ function Control:init(position)
     local joysticks = love.joystick.getJoysticks()
 
     self.joystick = joysticks[position]
-
-
+    self.keysPressed = {}
 end
 
 function Control:update(dt)
@@ -41,6 +40,32 @@ function Control:updateKey(key)
     else
         self[key] = false
     end
+end
+
+function Control:registerKey(key, type)
+    for label, value in pairs(keyMap) do
+        if value[type] == key then
+            self.keysPressed[label] = true;
+
+            return
+        end
+    end
+end
+
+function Control:registerGamepadKey(key)
+    self:registerKey(key, 'gp')
+end
+
+function Control:registerKeyboard(key)
+    self:registerKey(key, 'kb')
+end
+
+function Control:wasPressed(key)
+    return self.keysPressed[key];
+end
+
+function Control:cleanKeys()
+    self.keysPressed = {}
 end
 
 function Control:keyboardDown(label)

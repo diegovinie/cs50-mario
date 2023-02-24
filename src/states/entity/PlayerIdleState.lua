@@ -25,7 +25,7 @@ function PlayerIdleState:update(dt)
     end
 
     -- anti bounce needed | love.keyboard.wasPressed('space')
-    if gControl.buttonA then
+    if gControl.keysPressed.buttonA then
         self.player:changeState('jump')
     end
 
