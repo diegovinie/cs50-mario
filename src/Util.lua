@@ -10,11 +10,16 @@
     Helper functions for writing Match-3.
 ]]
 
+---
 --[[
     Given an "atlas" (a texture with multiple sprites), as well as a
     width and a height for the tiles therein, split the texture into
-    all of the quads by simply dividing it evenly.
-]]
+    all of the quads by simply dividing it evenly. ]]
+---
+---@param atlas love.Image
+---@param tilewidth number
+---@param tileheight number
+---@return table<love.Quad>
 function GenerateQuads(atlas, tilewidth, tileheight)
     local sheetWidth = atlas:getWidth() / tilewidth
     local sheetHeight = atlas:getHeight() / tileheight
@@ -34,9 +39,16 @@ function GenerateQuads(atlas, tilewidth, tileheight)
     return spritesheet
 end
 
---[[
-    Divides quads we've generated via slicing our tile sheet into separate tile sets.
-]]
+---
+---Divides quads we've generated via slicing our tile sheet into separate tile sets.
+---
+---@param quads table<love.Quad>
+---@param setsX   integer
+---@param setsY   integer
+---@param sizeX   integer
+---@param sizeY   integer
+---@return table<love.Quad>
+---@nodiscard
 function GenerateTileSets(quads, setsX, setsY, sizeX, sizeY)
     local tilesets = {}
     local tableCounter = 0
@@ -61,6 +73,35 @@ function GenerateTileSets(quads, setsX, setsY, sizeX, sizeY)
 
     return tilesets
 end
+
+---Return the Post frames
+---
+---@param quads table<love.Quad>
+---@return table<love.Quad>
+function GetFlagFrames(quads)
+    local frames = {}
+
+    for i = 7, 63, 9 do
+        table.insert(frames, quads[i])
+    end
+
+    return frames
+end
+
+---Return the Flag frames
+---
+---@param quads table<love.Quad>
+---@return table<love.Quad>
+function GetPostFrames(quads)
+    local frames = {}
+
+    for i = 3, 6 do
+        table.insert(frames, quads[i])
+    end
+
+    return frames
+end
+
 --[[
     Recursive table printing function.
     https://coronalabs.com/blog/2014/09/02/tutorial-printing-table-contents/

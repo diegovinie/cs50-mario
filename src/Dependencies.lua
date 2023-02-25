@@ -76,6 +76,7 @@ gTextures = {
     ['backgrounds'] = love.graphics.newImage('graphics/backgrounds.png'),
     ['green-alien'] = love.graphics.newImage('graphics/green_alien.png'),
     ['keys-and-locks'] = love.graphics.newImage('graphics/keys_and_locks.png'),
+    ['posts-and-flags'] = love.graphics.newImage('graphics/flags.png'),
     ['creatures'] = love.graphics.newImage('graphics/creatures.png')
 }
 
@@ -90,6 +91,8 @@ gFrames = {
     ['backgrounds'] = GenerateQuads(gTextures['backgrounds'], 256, 128),
     ['green-alien'] = GenerateQuads(gTextures['green-alien'], 16, 20),
     ['keys-and-locks'] = GenerateQuads(gTextures['keys-and-locks'], 16, 16),
+    ['posts'] = GetPostFrames(GenerateQuads(gTextures['posts-and-flags'], 16, 48)),
+    ['flags'] = GetFlagFrames(GenerateQuads(gTextures['posts-and-flags'], 16, 16)),
     ['creatures'] = GenerateQuads(gTextures['creatures'], 16, 16)
 }
 

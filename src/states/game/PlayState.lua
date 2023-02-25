@@ -14,6 +14,7 @@ function PlayState:init()
     self.tileMap = self.level.tileMap
     self.background = math.random(3)
     self.backgroundX = 0
+    self.wonLevel = false
 
     self.gravityOn = true
     self.gravityAmount = 6
@@ -153,4 +154,13 @@ function PlayState:calcSafeStartX()
         end
     end
     error("no safe tile.")
+end
+
+function PlayState:winLevel()
+    if not self.wonLevel then
+        self.wonLevel = true
+        print('level won')
+        gPaused = true
+        -- gStateMachine:change('interlude')
+    end
 end

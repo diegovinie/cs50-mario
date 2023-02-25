@@ -173,7 +173,7 @@ end
 
 function LevelMaker.genKeyLockPair(map, color)
     local keyX,     keyY    = map:findSaveSlots(math.random(10, 20), math.random(3))
-    local lockedX,  lockedY = map:findSaveSlots(map.width - 10, 3, true)
+    local lockedX, lockedY  = map:findSaveSlots(math.random(10, 20), math.random(2, 3))
 
     local key = GameObject {
         texture = 'keys-and-locks',
@@ -186,11 +186,12 @@ function LevelMaker.genKeyLockPair(map, color)
         hit = false,
         solid = false,
         onConsume = function(obj)
-            print('col with key', obj)
+            obj.hasKey = true
         end
     }
+    local locked
 
-    local locked = GameObject {
+    locked = GameObject {
         texture = 'keys-and-locks',
         frame = color + 4,
         x = (lockedX - 1) * TILE_SIZE,
@@ -200,13 +201,49 @@ function LevelMaker.genKeyLockPair(map, color)
         collidable = true,
         hit = false,
         solid = true,
-        onCollide = function(obj)
-            print('col with block', obj)
+        onCollide = function(_, player)
+            if player.isPlayer then
+                if player:unlockBlock(locked) then
+                    player.level:spawnPostFlag(4, color)
+                end
+            end
         end
-        }
+    }
 
     return key, locked
 end
 
+function LevelMaker.spawnPostFlag(x, y, color)
+    local post = GameObject {
+        texture = 'posts-and-flags',
+        quads = 'posts',
+        frame = color,
+        x = (x - 1) * TILE_SIZE,
+        y = (y - 3) * TILE_SIZE,
+        width = 16,
+        height = 16 * 3,
+        consumable = false,
+        hit = false,
+        solid = false,
+    }
+
+    local flag = GameObject {
+        texture = 'posts-and-flags',
+        quads = 'flags',
+        frame = color,
+        x = (x - 1) * TILE_SIZE + 10,
+        y = (y - 3) * TILE_SIZE + 5,
+        width = 16,
+        height = 16,
+        collidable = true,
+        hit = false,
+        solid = false,
+        onCollide = function(obj, player)
+            print('Implement onCollide')
+        end
+    }
+
+    return post, flag
+end
 
 

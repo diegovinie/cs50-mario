@@ -56,3 +56,14 @@ function GameLevel:render()
         entity:render()
     end
 end
+
+function GameLevel:spawnPostFlag(_x, color)
+    local x, y = self.tileMap:findSaveSlots(_x, 0)
+    local post, flag = LevelMaker.spawnPostFlag(x, y, color)
+
+
+    flag.onCollide = function() gStateMachine.current:winLevel() end
+
+    table.insert(self.objects, post)
+    table.insert(self.objects, flag)
+end

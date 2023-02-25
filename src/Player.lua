@@ -13,6 +13,8 @@ Player = Class{__includes = Entity}
 function Player:init(def)
     Entity.init(self, def)
     self.score = 0
+    self.hasKey = false
+    self.isPlayer = true
 end
 
 function Player:update(dt)
@@ -32,7 +34,7 @@ function Player:checkLeftCollisions(dt)
     if (tileTopLeft and tileBottomLeft) and (tileTopLeft:collidable() or tileBottomLeft:collidable()) then
         self.x = (tileTopLeft.x - 1) * TILE_SIZE + tileTopLeft.width - 1
     else
-        
+
         -- allow us to walk atop solid objects even if we collide with them
         self.y = self.y - 1
         local collidedObjects = self:checkObjectCollisions()
@@ -54,7 +56,7 @@ function Player:checkRightCollisions(dt)
     if (tileTopRight and tileBottomRight) and (tileTopRight:collidable() or tileBottomRight:collidable()) then
         self.x = (tileTopRight.x - 1) * TILE_SIZE - self.width
     else
-        
+
         -- allow us to walk atop solid objects even if we collide with them
         self.y = self.y - 1
         local collidedObjects = self:checkObjectCollisions()
@@ -77,9 +79,25 @@ function Player:checkObjectCollisions()
             elseif object.consumable then
                 object.onConsume(self)
                 table.remove(self.level.objects, k)
+            elseif object.collidable then
+                object.onCollide(object, self)
             end
         end
     end
 
     return collidedObjects
+end
+
+function Player:unlockBlock(block)
+    if self.hasKey then
+        for index, value in ipairs(self.level.objects) do
+            if value == block then
+                table.remove(self.level.objects, index)
+
+                return true
+            end
+        end
+    end
+
+    return false
 end
