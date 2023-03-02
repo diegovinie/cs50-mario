@@ -41,7 +41,7 @@ end
 
 function PlayState:update(dt)
     -- anti-bounce needed
-    if gControl.start then
+    if gControl:wasPressed('start') then
         gPaused = not gPaused
     end
 
