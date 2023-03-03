@@ -36,7 +36,7 @@ function PlayState:enter(params)
     self.backgroundX = 0
     self.wonLevel = false
     self.titlesDisplayed = false
-    self.level = LevelMaker.generate(50 * self.stage * 20, 10)
+    self.level = LevelMaker.generate(50 + self.stage * 20, 10)
     self.tileMap = self.level.tileMap
     
     self.player = params.player or self.player

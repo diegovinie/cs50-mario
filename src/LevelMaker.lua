@@ -172,8 +172,8 @@ function LevelMaker.generate(width, height)
 end
 
 function LevelMaker.genKeyLockPair(map, color, objects)
-    local keyPos    = map:findSafeFreeSlot(objects, { refX = math.random(10, 20), height = math.random(3) })
-    local lockedPos = map:findSafeFreeSlot(objects, { refX = math.random(10, 20), height = math.random(2, 3), backwards = true })
+    local keyPos    = map:findSafeFreeSlot(objects, { refX = math.random(20, 40), height = math.random(3) })
+    local lockedPos = map:findSafeFreeSlot(objects, { refX = map.width - 20, height = math.random(2, 4), backwards = true })
 
 
 
@@ -207,7 +207,7 @@ function LevelMaker.genKeyLockPair(map, color, objects)
         onCollide = function(_, player)
             if player.isPlayer then
                 if player:unlockBlock(locked) then
-                    player.level:spawnPostFlag(4, color)
+                    player.level:spawnPostFlag(map.width - 10, color)
                     gSounds['powerup-reveal']:play()
                 end
             end

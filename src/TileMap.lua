@@ -79,6 +79,7 @@ end
 
 function TileMap:findSafeFreeSlot(objects, params)
     local refX = params.refX
+    local sgn = params.backwards and -1 or 1
 
     local condition = function(pos)
         -- print_r(pos)
@@ -92,8 +93,6 @@ function TileMap:findSafeFreeSlot(objects, params)
         -- print_r(candidate)
         for _, object in pairs(objects) do
             if object:collides(candidate) then
-                print('collides')
-
                 return false
             end
         end
@@ -102,7 +101,7 @@ function TileMap:findSafeFreeSlot(objects, params)
     end
 
     local changes = { refX = 1 }
-    local mapper = function(prev, pos) return prev + pos end
+    local mapper = function(prev, pos) return prev + sgn * pos end
 
     return RepeatIf(condition, function(x) return self:findSaveSlots(x) end, params, changes, mapper)
 end
