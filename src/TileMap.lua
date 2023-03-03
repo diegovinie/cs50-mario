@@ -59,20 +59,50 @@ function TileMap:findTopperY(x)
     return nil
 end
 
-function TileMap:findSaveSlots(refX, height, backwards)
-    height = height or 0
-    local endSlot = backwards and 1 or self.width
-    local step = backwards and -1 or 1
+function TileMap:findSaveSlots(params)
+    local height = params.height or 0
+    local endSlot = params.backwards and 1 or self.width
+    local step = params.backwards and -1 or 1
 
-    for x = refX, endSlot, step do
+    for x = params.refX, endSlot, step do
         if self:checkColumnSoil(x) then
             local topper = self:findTopperY(x)
             local y = topper - 1 - height
             if y > 0 then
-                return x, y
+                return { x = x, y = y }
             end
         end
     end
 
     error('No safe place')
+end
+
+function TileMap:findSafeFreeSlot(objects, params)
+    local refX = params.refX
+
+    local condition = function(pos)
+        -- print_r(pos)
+        local candidate = {
+            x = (pos.x - 1) * TILE_SIZE,
+            y = (pos.y - 1) * TILE_SIZE,
+            width = TILE_SIZE,
+            height = TILE_SIZE
+        }
+
+        -- print_r(candidate)
+        for _, object in pairs(objects) do
+            if object:collides(candidate) then
+                print('collides')
+
+                return false
+            end
+        end
+
+        return true
+    end
+
+    local changes = { refX = 1 }
+    local mapper = function(prev, pos) return prev + pos end
+
+    return RepeatIf(condition, function(x) return self:findSaveSlots(x) end, params, changes, mapper)
 end

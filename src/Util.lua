@@ -169,18 +169,43 @@ function PrintT(ta)
     end
 end
 
---
---
+--- Merge two tables but also accept a mapper so the new value will be f(a,b)
+--- 
+---@param original table
+---@param changed table
+---@param fun? fun(original: any, changed: any): any by default: f(original, changed) -> changed
+---@return table
+function MapMergeTables(original, changed, fun)
+    fun = fun and fun or function(a, b) return b end
 
---
+    local result = {}
 
---
+    for key, value in pairs(original) do
+        result[key] = value
+    end
 
---
+    for key, value in pairs(changed) do
+        result[key] = fun(original[key], value)
+    end
 
---   x x x x x
--- y
--- y
--- y
--- y
--- y
+    return result
+end
+
+---Execute the function until the result complies the condition
+---
+---This is meant to use with random functions, but in case, you can change the function parameters with changes and mapper.
+--- 
+---@generic Res : any Result
+---@generic Args : table
+---@param condition fun(result: Res): boolean Function that evaluates the result
+---@param fn fun(args: Args): Res The function tested
+---@param args Args Parameters for the tested function
+---@param changes? Args Changes in the parameters, by default it replaces them
+---@param mapper? fun(origin: any, changed: any) A function that changes the parameters
+---@return Res
+function RepeatIf(condition, fn, args, changes, mapper)
+    local result = fn(args)
+    changes = changes or {}
+
+    return condition(result) and result or RepeatIf(condition, fn, MapMergeTables(args, changes, mapper), changes, mapper)
+end

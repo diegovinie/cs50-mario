@@ -163,7 +163,7 @@ function LevelMaker.generate(width, height)
 
     local map = TileMap(width, height)
     map.tiles = tiles
-    local key, locked = LevelMaker.genKeyLockPair(map, math.random(4))
+    local key, locked = LevelMaker.genKeyLockPair(map, math.random(4), objects)
 
     table.insert(objects, key)
     table.insert(objects, locked)
@@ -171,15 +171,17 @@ function LevelMaker.generate(width, height)
     return GameLevel(entities, objects, map)
 end
 
-function LevelMaker.genKeyLockPair(map, color)
-    local keyX,     keyY    = map:findSaveSlots(math.random(10, 20), math.random(3))
-    local lockedX, lockedY  = map:findSaveSlots(math.random(10, 20), math.random(2, 3))
+function LevelMaker.genKeyLockPair(map, color, objects)
+    local keyPos    = map:findSafeFreeSlot(objects, { refX = math.random(10, 20), height = math.random(3) })
+    local lockedPos = map:findSafeFreeSlot(objects, { refX = math.random(10, 20), height = math.random(2, 3), backwards = true })
+
+
 
     local key = GameObject {
         texture = 'keys-and-locks',
         frame = color,
-        x = (keyX - 1) * TILE_SIZE,
-        y = (keyY - 1) * TILE_SIZE,
+        x = (keyPos.x - 1) * TILE_SIZE,
+        y = (keyPos.y - 1) * TILE_SIZE,
         width = 16,
         height = 16,
         consumable = true,
@@ -195,8 +197,8 @@ function LevelMaker.genKeyLockPair(map, color)
     locked = GameObject {
         texture = 'keys-and-locks',
         frame = color + 4,
-        x = (lockedX - 1) * TILE_SIZE,
-        y = (lockedY - 1) * TILE_SIZE,
+        x = (lockedPos.x - 1) * TILE_SIZE,
+        y = (lockedPos.y - 1) * TILE_SIZE,
         width = 16,
         height = 16,
         collidable = true,

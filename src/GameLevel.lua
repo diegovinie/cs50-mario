@@ -58,8 +58,8 @@ function GameLevel:render()
 end
 
 function GameLevel:spawnPostFlag(_x, color)
-    local x, y = self.tileMap:findSaveSlots(_x, 0)
-    local post, flag = LevelMaker.spawnPostFlag(x, y, color)
+    local pos = self.tileMap:findSafeFreeSlot(self.objects, { refX = _x, height = 0})
+    local post, flag = LevelMaker.spawnPostFlag(pos.x, pos.y, color)
 
 
     flag.onCollide = function() gStateMachine.current:winLevel() end
