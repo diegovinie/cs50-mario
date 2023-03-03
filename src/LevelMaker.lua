@@ -187,6 +187,7 @@ function LevelMaker.genKeyLockPair(map, color)
         solid = false,
         onConsume = function(obj)
             obj.hasKey = true
+            gSounds['pickup']:play()
         end
     }
     local locked
@@ -205,6 +206,7 @@ function LevelMaker.genKeyLockPair(map, color)
             if player.isPlayer then
                 if player:unlockBlock(locked) then
                     player.level:spawnPostFlag(4, color)
+                    gSounds['powerup-reveal']:play()
                 end
             end
         end

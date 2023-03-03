@@ -55,11 +55,13 @@ require 'src/Tile'
 require 'src/TileMap'
 require 'src/Control'
 
+gUI = require 'src/UI'
 
 gSounds = {
     ['jump'] = love.audio.newSource('sounds/jump.wav', 'static'),
     ['death'] = love.audio.newSource('sounds/death.wav', 'static'),
     ['music'] = love.audio.newSource('sounds/music.wav', 'static'),
+    ['victory'] = love.audio.newSource('sounds/victory.wav', 'static'),
     ['powerup-reveal'] = love.audio.newSource('sounds/powerup-reveal.wav', 'static'),
     ['pickup'] = love.audio.newSource('sounds/pickup.wav', 'static'),
     ['empty-block'] = love.audio.newSource('sounds/empty-block.wav', 'static'),

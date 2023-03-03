@@ -8,20 +8,14 @@
 PlayState = Class{__includes = BaseState}
 
 function PlayState:init()
+    self.stage = 1
     self.camX = 0
     self.camY = 0
-    self.level = LevelMaker.generate(100, 10)
-    self.tileMap = self.level.tileMap
-    self.background = math.random(3)
-    self.backgroundX = 0
     self.wonLevel = false
-
     self.gravityOn = true
     self.gravityAmount = 6
 
     self.player = Player({
-        x = self:calcSafeStartX(),
-        y = 0,
         width = 16, height = 20,
         texture = 'green-alien',
         stateMachine = StateMachine {
@@ -30,24 +24,52 @@ function PlayState:init()
             ['jump'] = function() return PlayerJumpState(self.player, self.gravityAmount) end,
             ['falling'] = function() return PlayerFallingState(self.player, self.gravityAmount) end
         },
-        map = self.tileMap,
-        level = self.level
     })
+end
 
+function PlayState:enter(params)
+    params = params or {}
+    self.stage = params.stage or self.stage
+    self.camX = 0
+    self.camY = 0
+    self.background = math.random(3)
+    self.backgroundX = 0
+    self.wonLevel = false
+    self.titlesDisplayed = false
+    self.level = LevelMaker.generate(50 * self.stage * 20, 10)
+    self.tileMap = self.level.tileMap
+    
+    self.player = params.player or self.player
+    self.player.map = self.tileMap
+    self.player.level = self.level
+    self.player.x = self:calcSafeStartX()
+    self.player.y = 0
+    self.player.hasKey = false
+    
     self:spawnEnemies()
+    
+    gSounds['music']:play()
 
     self.player:changeState('falling')
 end
 
 function PlayState:update(dt)
-    -- anti-bounce needed
     if gControl:wasPressed('start') then
         gPaused = not gPaused
     end
 
-    if gPaused then return end
-
     Timer.update(dt)
+
+    if self.wonLevel then
+        if gControl:wasPressed('start') then
+            gStateMachine:change('play', {
+                stage = self.stage + 1,
+                player = self.player
+            })
+        end
+    end
+    
+    if gPaused then return end
 
     -- remove any nils from pickups, etc.
     self.level:clear()
@@ -88,6 +110,11 @@ function PlayState:render()
     love.graphics.print(tostring(self.player.score), 5, 5)
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.print(tostring(self.player.score), 4, 4)
+
+    if self.wonLevel and self.titlesDisplayed then
+        gUI.renderMainTitle('Victory!')
+        gUI.renderLowerTitle('Press enter to continue')
+    end
 end
 
 function PlayState:updateCamera()
@@ -159,8 +186,11 @@ end
 function PlayState:winLevel()
     if not self.wonLevel then
         self.wonLevel = true
-        print('level won')
+        gSounds['music']:stop()
+        gSounds.victory:play()
         gPaused = true
-        -- gStateMachine:change('interlude')
+        Timer.after(3, function()
+            self.titlesDisplayed = true
+        end)
     end
 end
